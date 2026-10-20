@@ -160,7 +160,7 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
       <Label
         for="upload-threads"
         class="size-full"
-      >Upload Threads</Label>
+      >上傳執行緒</Label>
       <NumberFieldContent>
         <NumberFieldDecrement
           class="cursor-pointer"
@@ -170,36 +170,40 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         <NumberFieldIncrement class="cursor-pointer" />
       </NumberFieldContent>
     </NumberField>
+
     <div class="flex items-center justify-between">
       <Label
         for="use-quota"
         class="size-full cursor-pointer"
-      >Use Quota</Label>
+      >使用配額</Label>
       <Switch
         id="use-quota"
         v-model="settings.useQuota"
       />
     </div>
+
     <div class="flex items-center justify-between">
       <Label
         for="saver-mode"
         class="size-full cursor-pointer"
-      >Storage Saver Quality</Label>
+      >儲存空間節省模式</Label>
       <Switch
         id="saver-mode"
         v-model="settings.saver"
       />
     </div>
+
     <div class="flex items-center justify-between">
       <Label
         for="recursive"
         class="size-full cursor-pointer"
-      >Recursive Directory Upload</Label>
+      >遞迴資料夾上傳</Label>
       <Switch
         id="recursive"
         v-model="settings.recursive"
       />
     </div>
+
     <div class="flex items-center justify-between">
       <div
         class="flex min-w-0 flex-1 cursor-pointer items-center gap-1.5"
@@ -208,19 +212,19 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         <Label
           for="force-upload"
           class="cursor-pointer"
-        >Force Upload</Label>
+        >強制上傳</Label>
         <Tooltip>
           <TooltipTrigger as-child>
             <button
               type="button"
-              class="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              aria-label="About Force Upload"
+              class="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              aria-label="關於強制上傳"
             >
               <Info class="size-3.5" />
             </button>
           </TooltipTrigger>
           <TooltipContent class="max-w-72">
-            Applies to single files. Live Photo pairs always check both components for duplicates.
+            僅適用於單一檔案。Live Photo 配對仍會檢查兩個元件是否重複。
           </TooltipContent>
         </Tooltip>
       </div>
@@ -229,6 +233,7 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         v-model="settings.forceUpload"
       />
     </div>
+
     <div class="flex items-center justify-between">
       <div
         class="flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 pr-4"
@@ -237,19 +242,19 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         <Label
           for="pair-live-photos"
           class="cursor-pointer"
-        >Pair Apple Live Photos</Label>
+        >配對 Apple Live Photo</Label>
         <Tooltip>
           <TooltipTrigger as-child>
             <button
               type="button"
-              class="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              aria-label="About Pair Apple Live Photos"
+              class="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              aria-label="關於配對 Apple Live Photo"
             >
               <Info class="size-3.5" />
             </button>
           </TooltipTrigger>
           <TooltipContent class="max-w-72">
-            Identify Apple Live Photo image and MOV pairs via embedded metadata and upload them as one item.
+            依據內嵌中繼資料識別 Apple Live Photo 的照片與 MOV 檔案，並視為同一項目上傳。
           </TooltipContent>
         </Tooltip>
       </div>
@@ -258,6 +263,7 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         v-model="settings.pairLivePhotos"
       />
     </div>
+
     <div
       class="flex items-center justify-between pl-4 transition-opacity"
       :class="settings.pairLivePhotos ? 'opacity-100' : 'opacity-45'"
@@ -270,20 +276,19 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         <Label
           for="skip-incomplete-live-photos"
           :class="settings.pairLivePhotos ? 'cursor-pointer' : 'cursor-not-allowed'"
-        >Skip Incomplete Live Photos</Label>
+        >略過不完整的 Live Photo</Label>
         <Tooltip>
           <TooltipTrigger as-child>
             <button
               type="button"
-              class="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              aria-label="About Skip Incomplete Live Photos"
+              class="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              aria-label="關於略過不完整的 Live Photo"
             >
               <Info class="size-3.5" />
             </button>
           </TooltipTrigger>
           <TooltipContent class="max-w-72">
-            Only upload Live Photos when both photo and video are available. If either is missing,
-            don't upload the remaining file separately.
+            只有在照片與影片都存在時才會上傳 Live Photo；若其中一項缺失，則不會再另外上傳剩餘檔案。
           </TooltipContent>
         </Tooltip>
       </div>
@@ -293,6 +298,7 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         :disabled="!settings.pairLivePhotos"
       />
     </div>
+
     <div
       class="flex items-center justify-between pl-4 transition-opacity"
       :class="settings.pairLivePhotos ? 'opacity-100' : 'opacity-45'"
@@ -305,19 +311,19 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         <Label
           for="update-existing-photos-to-live"
           :class="settings.pairLivePhotos ? 'cursor-pointer' : 'cursor-not-allowed'"
-        >Update Existing Photos to Live Photos</Label>
+        >將既有照片升級為 Live Photo</Label>
         <Tooltip>
           <TooltipTrigger as-child>
             <button
               type="button"
-              class="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-              aria-label="About Update Existing Photos to Live Photos"
+              class="inline-flex size-5 shrink-0 cursor-help items-center justify-center rounded-full text-muted-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              aria-label="關於將既有照片升級為 Live Photo"
             >
               <Info class="size-3.5" />
             </button>
           </TooltipTrigger>
           <TooltipContent class="max-w-72">
-            If a static photo was already uploaded, re-upload it alongside its MOV companion to upgrade it to a Live Photo. Both local photo and video files are required.
+            若靜態照片已經上傳過，系統會重新上傳它並搭配其 MOV 檔案，將其升級為 Live Photo。需要同時提供本機照片與影片檔案。
           </TooltipContent>
         </Tooltip>
       </div>
@@ -327,42 +333,46 @@ watch(() => settings.value.uploadThreads, async (newValue) => {
         :disabled="!settings.pairLivePhotos"
       />
     </div>
+
     <div class="flex items-center justify-between">
       <Label
         for="filter-unsupported"
         class="size-full cursor-pointer"
-      >Disable Unsupported Files Filter</Label>
+      >停用不支援檔案過濾</Label>
       <Switch
         id="filter-unsupported"
         v-model="settings.disableUnsupportedFilesFilter"
       />
     </div>
+
     <div class="flex items-center justify-between">
       <Label
         for="set-date-from-filename"
         class="size-full cursor-pointer"
-      >Set Upload Date from Filename</Label>
+      >依檔名設定上傳日期</Label>
       <Switch
         id="set-date-from-filename"
         v-model="settings.setDateFromFilename"
       />
     </div>
+
     <div class="flex items-center justify-between">
       <Label
         for="delete-host"
         class="size-full cursor-pointer"
-      >Delete From Host After Upload</Label>
+      >上傳後從來源端刪除</Label>
       <Switch
         id="delete-host"
         v-model="settings.deleteFromHost"
         variant="destructive"
       />
     </div>
+
     <div>
       <Input
         v-model="settings.proxy"
         type="text"
-        placeholder="Proxy URL (optional)"
+        placeholder="Proxy URL（選填）"
       />
     </div>
   </div>
