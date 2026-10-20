@@ -55,7 +55,7 @@ watch(selectedValue, (newValue) => {
     v-model:open="isOpen"
   >
     <SelectTrigger class="max-w-60 select-none">
-      <SelectValue placeholder="Select account" />
+      <SelectValue placeholder="選擇帳號" />
     </SelectTrigger>
     <SelectContent
       align="center"
@@ -83,8 +83,8 @@ watch(selectedValue, (newValue) => {
           <button
             type="button"
             class="absolute right-1.5 top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded text-muted-foreground hover:bg-destructive hover:text-white disabled:pointer-events-none disabled:opacity-50"
-            :aria-label="`Remove ${option}`"
-            :title="`Remove ${option}`"
+            :aria-label="`移除 ${option}`"
+            :title="`移除 ${option}`"
             :disabled="removingAccount === option"
             @pointerdown.stop.prevent
             @click.stop.prevent="emit('item-removed', option)"
@@ -96,12 +96,12 @@ watch(selectedValue, (newValue) => {
       <SelectSeparator v-if="options.length" />
       <button
         type="button"
-        class="focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm text-muted-foreground outline-hidden select-none hover:bg-accent"
+        class="focus:bg-accent focus:text-accent-foreground relative flex w-full cursor-default items-center gap-2 rounded-sm py-1.5 pr-2 pl-8 text-sm text-muted-foreground outline-hidden select-none"
         @pointerdown.stop.prevent
         @click.stop.prevent="isOpen = false; emit('add')"
       >
         <Plus class="size-4" />
-        Add account
+        新增帳號
       </button>
     </SelectContent>
   </Select>
