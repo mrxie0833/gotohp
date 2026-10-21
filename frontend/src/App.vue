@@ -418,7 +418,7 @@ onUnmounted(() => {
         <!-- Normal UI when not dragging -->
         <template v-else>
           <h1 class="text-xl font-semibold select-none">
-            拖放檔案以上傳
+            拖放檔案上傳
           </h1>
           <GoogleAccountSelect
             v-model="selectedOption"
@@ -500,3 +500,4 @@ onUnmounted(() => {
     />
   </main>
 </template>
+
