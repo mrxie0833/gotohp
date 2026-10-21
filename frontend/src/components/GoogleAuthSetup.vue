@@ -98,7 +98,7 @@ async function addRawCredential() {
     >
       <div class="mx-auto flex w-full max-w-sm flex-col px-5 pt-1 pb-6">
         <SheetHeader class="gap-0 px-0 pb-4 text-center">
-          <SheetTitle>連線 Google 相片</SheetTitle>
+          <SheetTitle>連線 Google 相簿</SheetTitle>
         </SheetHeader>
 
         <div class="flex flex-col gap-4">
