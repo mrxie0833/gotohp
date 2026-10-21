@@ -39,7 +39,7 @@ async function openEmbeddedSetup() {
   try {
     await Browser.OpenURL(embeddedSetupURL)
   } catch (error) {
-    toast.error('Could not open the system browser', {
+    toast.error('無法開啟系統瀏覽器', {
       description: error instanceof Error ? error.message : String(error),
     })
   }
@@ -55,11 +55,11 @@ async function connectAccount() {
     oauthToken.value = ''
     isOpen.value = false
     emit('account-added')
-    toast.success('Google account connected.', {
+    toast.success('Google 帳號已連線。', {
       description: connectedEmail,
     })
   } catch (error) {
-    toast.error('Could not connect Google account', {
+    toast.error('無法連線 Google 帳號', {
       description: error instanceof Error ? error.message : String(error),
     })
   } finally {
@@ -78,9 +78,9 @@ async function addRawCredential() {
     rawCredential.value = ''
     isOpen.value = false
     emit('account-added')
-    toast.success('Credentials added.')
+    toast.success('憑證已新增。')
   } catch (error) {
-    toast.error('Could not add credentials', {
+    toast.error('無法新增憑證', {
       description: error instanceof Error ? error.message : String(error),
     })
   } finally {
@@ -98,7 +98,7 @@ async function addRawCredential() {
     >
       <div class="mx-auto flex w-full max-w-sm flex-col px-5 pt-1 pb-6">
         <SheetHeader class="gap-0 px-0 pb-4 text-center">
-          <SheetTitle>Connect Google Photos</SheetTitle>
+          <SheetTitle>連線 Google 相片</SheetTitle>
         </SheetHeader>
 
         <div class="flex flex-col gap-4">
@@ -106,7 +106,7 @@ async function addRawCredential() {
           <div class="flex flex-col gap-2">
             <p class="flex items-center gap-2 text-sm font-medium select-none">
               <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs">1</span>
-              Open the Google sign-in page
+              開啟 Google 登入頁面
             </p>
             <Button
               type="button"
@@ -116,14 +116,14 @@ async function addRawCredential() {
               @click="openEmbeddedSetup"
             >
               <ExternalLink class="size-4" />
-              Open sign-in
+              開啟登入頁面
             </Button>
             <ol class="list-decimal space-y-1 rounded-lg border bg-muted/30 py-2.5 pr-3 pl-7 text-xs leading-snug text-muted-foreground">
               <li>
-                Sign in, then click <span class="text-foreground">I agree</span>. The page may hang on a spinner. That's fine.
+                登入後，點選 <span class="text-foreground">我同意</span>。頁面可能卡在載入動畫，這是正常的。
               </li>
-              <li>Open DevTools, then Application or Storage → Cookies → accounts.google.com.</li>
-              <li>Copy the <code class="text-foreground">oauth_token</code> cookie's value.</li>
+              <li>開啟開發者工具，然後進入 Application 或 Storage → Cookies → accounts.google.com。</li>
+              <li>複製 <code class="text-foreground">oauth_token</code> Cookie 的值。</li>
             </ol>
           </div>
 
@@ -134,7 +134,7 @@ async function addRawCredential() {
               class="flex items-center gap-2 text-sm font-medium"
             >
               <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs">2</span>
-              Paste the oauth_token value
+              貼上 oauth_token 的值
             </Label>
             <Input
               id="google-oauth-token"
@@ -142,7 +142,7 @@ async function addRawCredential() {
               type="password"
               autocomplete="off"
               spellcheck="false"
-              placeholder="Paste the cookie value"
+              placeholder="貼上 Cookie 值"
               :disabled="isConnecting"
               @keydown.enter="connectAccount"
             />
@@ -152,7 +152,7 @@ async function addRawCredential() {
               :disabled="!oauthToken.trim() || isConnecting"
               @click="connectAccount"
             >
-              {{ isConnecting ? 'Connecting...' : 'Connect account' }}
+              {{ isConnecting ? '連線中...' : '連線帳號' }}
             </Button>
           </div>
         </div>
@@ -167,7 +167,7 @@ async function addRawCredential() {
               class="size-3.5 transition-transform"
               :class="showAdvanced && 'rotate-180'"
             />
-            Paste a captured credential instead
+            改為貼上擷取到的憑證
           </button>
           <div
             v-if="showAdvanced"
@@ -190,7 +190,7 @@ async function addRawCredential() {
               :disabled="!rawCredential.trim() || isAddingRawCredential"
               @click="addRawCredential"
             >
-              {{ isAddingRawCredential ? 'Adding...' : 'Add credential' }}
+              {{ isAddingRawCredential ? '新增中...' : '新增憑證' }}
             </Button>
           </div>
         </div>
@@ -198,3 +198,4 @@ async function addRawCredential() {
     </SheetContent>
   </Sheet>
 </template>
+
