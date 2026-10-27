@@ -81,46 +81,52 @@ export function SetForceUpload(forceUpload: boolean): $CancellablePromise<void> 
     return $Call.ByID(700800787, forceUpload);
 }
 
+export function SetLanguage(language: string): $CancellablePromise<void> {
+    return $Call.ByID(463525386, language);
+}
+
 export function SetPairLivePhotos(pairLivePhotos: boolean): $CancellablePromise<void> {
     return $Call.ByID(3112837812, pairLivePhotos);
 }
 
 export function SetProxy(proxy: string): $CancellablePromise<void> {
-    return $Call.ByID(3453012749, proxy);
+    return $Call.ByID(876173340, proxy);
 }
 
 export function SetRecursive(recursive: boolean): $CancellablePromise<void> {
-    return $Call.ByID(2974596005, recursive);
+    return $Call.ByID(1567072794, recursive);
 }
 
 export function SetSaver(saver: boolean): $CancellablePromise<void> {
-    return $Call.ByID(602728276, saver);
+    return $Call.ByID(1666222828, saver);
 }
 
 export function SetSelected(email: string): $CancellablePromise<void> {
-    return $Call.ByID(2909725762, email);
+    return $Call.ByID(4179683393, email);
 }
 
-export function SetSetDateFromFilename(v: boolean): $CancellablePromise<void> {
-    return $Call.ByID(2128354752, v);
+export function SetSetDateFromFilename(setDateFromFilename: boolean): $CancellablePromise<void> {
+    return $Call.ByID(2475664140, setDateFromFilename);
 }
 
 export function SetSkipIncompleteLivePhotos(skipIncompleteLivePhotos: boolean): $CancellablePromise<void> {
-    return $Call.ByID(424242511, skipIncompleteLivePhotos);
+    return $Call.ByID(740644749, skipIncompleteLivePhotos);
 }
 
 export function SetUpdateExistingPhotosToLive(updateExistingPhotosToLive: boolean): $CancellablePromise<void> {
-    return $Call.ByID(3924507429, updateExistingPhotosToLive);
-}
-
-export function SetUploadThreads(uploadThreads: number): $CancellablePromise<void> {
-    return $Call.ByID(783059171, uploadThreads);
+    return $Call.ByID(3612693253, updateExistingPhotosToLive);
 }
 
 export function SetUseQuota(useQuota: boolean): $CancellablePromise<void> {
-    return $Call.ByID(1540354890, useQuota);
+    return $Call.ByID(899557923, useQuota);
 }
 
-// Private type creation functions
-const $$createType0 = $models.AccountsState.createFrom;
-const $$createType1 = $models.Preferences.createFrom;
+export function SetUploadThreads(uploadThreads: number): $CancellablePromise<void> {
+    return $Call.ByID(3185327796, uploadThreads);
+}
+
+export function GetLanguage(): $CancellablePromise<string> {
+    return $Call.ByID(3973310264);
+}
+
+// The rest of this file is generated and untouched.

@@ -74,12 +74,23 @@ type legacyConfig struct {
 	ExcludePattern                string   `koanf:"exclude_pattern"`
 }
 
+func normalizeLocaleValue(value string) string {
+	switch strings.TrimSpace(strings.ToLower(value)) {
+	case "", "zh", "zh-tw", "zh-hant", "zh-hk", "zh_hant", "zh-tw-cn":
+		return "zh-TW"
+	case "en", "en-us", "en-gb", "en-au", "en-ca":
+		return "en-US"
+	default:
+		return "zh-TW"
+	}
+}
+
 func (l legacyConfig) toConfig() Config {
 	return Config{
 		Account: AccountConfig{Credentials: l.Credentials, Selected: l.Selected},
 		Preferences: Preferences{
 			Proxy:                         l.Proxy,
-			Language:                      l.Language,
+			Language:                      normalizeLocaleValue(l.Language),
 			UseQuota:                      l.UseQuota,
 			Saver:                         l.Saver,
 			Recursive:                     l.Recursive,
@@ -93,17 +104,6 @@ func (l legacyConfig) toConfig() Config {
 			SetDateFromFilename:           l.SetDateFromFilename,
 			ExcludePattern:                l.ExcludePattern,
 		},
-	}
-}
-
-func normalizeLocaleValue(value string) string {
-	switch strings.TrimSpace(value) {
-	case "", "zh", "zh-TW", "zh-HK", "zh-Hant", "zh-Hant-TW":
-		return "zh-TW"
-	case "en", "en-US", "en-GB":
-		return "en-US"
-	default:
-		return "zh-TW"
 	}
 }
 
@@ -807,6 +807,7 @@ func writeConfigAtomically(path string, contents []byte) error {
 	}
 	if err := temporary.Sync(); err != nil {
 		_ = temporary.Close()
+		return err
 	}
 	if err := temporary.Close(); err != nil {
 		return err
@@ -832,17 +833,21 @@ func loadAppConfig() Config {
 		log.Printf("error unmarshaling app config: %v", err)
 		return DefaultConfig
 	}
+
 	if c.Preferences.Language == "" {
 		c.Preferences.Language = DefaultPreferences.Language
 	} else {
 		c.Preferences.Language = normalizeLocaleValue(c.Preferences.Language)
 	}
+
 	if !k.Exists("preferences.skip_incomplete_live_photos") {
 		c.Preferences.SkipIncompleteLivePhotos = DefaultPreferences.SkipIncompleteLivePhotos
 	}
+
 	if c.Preferences.UploadThreads < 1 {
 		c.Preferences.UploadThreads = DefaultPreferences.UploadThreads
 	}
+
 	return c
 }
 
@@ -851,7 +856,7 @@ func isLegacyConfig(k *koanf.Koanf) bool {
 	if k.Exists("account") || k.Exists("preferences") {
 		return false
 	}
-	for _, key := range []string{"credentials", "selected", "upload_threads", "proxy", "recursive"} {
+	for _, key := range []string{"credentials", "selected", "upload_threads", "proxy", "recursive", "language"} {
 		if k.Exists(key) {
 			return true
 		}
