@@ -30,6 +30,7 @@ type AccountConfig struct {
 // configured by flags alone.
 type Preferences struct {
 	Proxy                         string `json:"proxy" koanf:"proxy"`
+	Language                      string `json:"language" koanf:"language"`
 	UseQuota                      bool   `json:"useQuota" koanf:"use_quota"`
 	Saver                         bool   `json:"saver" koanf:"saver"`
 	Recursive                     bool   `json:"recursive" koanf:"recursive"`
@@ -58,6 +59,7 @@ type legacyConfig struct {
 	Credentials                   []string `koanf:"credentials"`
 	Selected                      string   `koanf:"selected"`
 	Proxy                         string   `koanf:"proxy"`
+	Language                      string   `koanf:"language"`
 	UseQuota                      bool     `koanf:"use_quota"`
 	Saver                         bool     `koanf:"saver"`
 	Recursive                     bool     `koanf:"recursive"`
@@ -77,6 +79,7 @@ func (l legacyConfig) toConfig() Config {
 		Account: AccountConfig{Credentials: l.Credentials, Selected: l.Selected},
 		Preferences: Preferences{
 			Proxy:                         l.Proxy,
+			Language:                      l.Language,
 			UseQuota:                      l.UseQuota,
 			Saver:                         l.Saver,
 			Recursive:                     l.Recursive,
@@ -90,6 +93,17 @@ func (l legacyConfig) toConfig() Config {
 			SetDateFromFilename:           l.SetDateFromFilename,
 			ExcludePattern:                l.ExcludePattern,
 		},
+	}
+}
+
+func normalizeLocaleValue(value string) string {
+	switch strings.TrimSpace(value) {
+	case "", "zh", "zh-TW", "zh-HK", "zh-Hant", "zh-Hant-TW":
+		return "zh-TW"
+	case "en", "en-US", "en-GB":
+		return "en-US"
+	default:
+		return "zh-TW"
 	}
 }
 
@@ -110,6 +124,7 @@ var (
 	AppConfig          Config
 	ConfigPath         string
 	DefaultPreferences = Preferences{
+		Language:                 "zh-TW",
 		SkipIncompleteLivePhotos: true,
 		UploadThreads:            3,
 	}
@@ -138,6 +153,12 @@ func LooksLikeAuthString(value string) bool {
 func (g *ConfigManager) SetProxy(proxy string) {
 	updateAppConfig(func(config *Config) {
 		config.Preferences.Proxy = proxy
+	})
+}
+
+func (g *ConfigManager) SetLanguage(language string) {
+	updateAppConfig(func(config *Config) {
+		config.Preferences.Language = normalizeLocaleValue(language)
 	})
 }
 
@@ -786,7 +807,6 @@ func writeConfigAtomically(path string, contents []byte) error {
 	}
 	if err := temporary.Sync(); err != nil {
 		_ = temporary.Close()
-		return err
 	}
 	if err := temporary.Close(); err != nil {
 		return err
@@ -812,15 +832,17 @@ func loadAppConfig() Config {
 		log.Printf("error unmarshaling app config: %v", err)
 		return DefaultConfig
 	}
-
+	if c.Preferences.Language == "" {
+		c.Preferences.Language = DefaultPreferences.Language
+	} else {
+		c.Preferences.Language = normalizeLocaleValue(c.Preferences.Language)
+	}
 	if !k.Exists("preferences.skip_incomplete_live_photos") {
 		c.Preferences.SkipIncompleteLivePhotos = DefaultPreferences.SkipIncompleteLivePhotos
 	}
-
 	if c.Preferences.UploadThreads < 1 {
 		c.Preferences.UploadThreads = DefaultPreferences.UploadThreads
 	}
-
 	return c
 }
 
@@ -843,11 +865,13 @@ func migrateLegacyConfig(k *koanf.Koanf) Config {
 	legacy := legacyConfig{
 		SkipIncompleteLivePhotos: DefaultPreferences.SkipIncompleteLivePhotos,
 		UploadThreads:            DefaultPreferences.UploadThreads,
+		Language:                 DefaultPreferences.Language,
 	}
 	if err := k.Unmarshal("", &legacy); err != nil {
 		log.Printf("error migrating legacy app config: %v", err)
 		return DefaultConfig
 	}
+	legacy.Language = normalizeLocaleValue(legacy.Language)
 	c := legacy.toConfig()
 	if c.Preferences.UploadThreads < 1 {
 		c.Preferences.UploadThreads = DefaultPreferences.UploadThreads
