@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -8,7 +10,6 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet'
 import { useColorMode } from '@vueuse/core'
-import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { UserPlus } from '@lucide/vue'
 import { ConfigManager } from '../bindings/app/core'
 import { Events } from '@wailsio/runtime'
@@ -25,8 +26,10 @@ import { toast } from "vue-sonner"
 
 useColorMode().value = "dark"
 
+const { t } = useI18n()
 const { state: uploadState } = uploadManager
-const copyButtonText = ref('複製為 JSON');
+const copyState = ref(false)
+const copyButtonText = computed(() => copyState.value ? t('app.copied') : t('app.copyJson'))
 
 // Drag state for dual drop zones
 const isDraggingFiles = ref(false)
@@ -53,7 +56,7 @@ watch(selectedOption, async (newValue) => {
       console.log('Successfully updated selected value:', newValue)
     } catch (error) {
       console.error('Failed to update selected value:', error)
-      toast.error('更新選取帳號失敗。')
+      toast.error(t('common.selectAccountFailed'))
     }
   } else {
     tokenBindingEmail.value = ''
@@ -83,7 +86,7 @@ async function refreshCredentials() {
     }
   } catch (error) {
     console.error('Failed to refresh Google accounts:', error)
-    toast.error('無法重新整理 Google 帳號', {
+    toast.error(t('app.cannotStartUpload'), {
       description: error instanceof Error ? error.message : String(error),
     })
   }
@@ -97,10 +100,10 @@ async function addTokenBindingAliasFromADB() {
     await ConfigManager.AddTokenBindingAliasFromADB(tokenBindingEmail.value)
     await refreshCredentials()
     tokenBindingEmail.value = ''
-    toast.success('已新增 token binding 金鑰。')
+    toast.success(t('app.addTokenBindingSuccess'))
   } catch (error) {
     console.error('Failed to add token binding key:', error)
-    toast.error('新增 token binding 金鑰失敗', {
+    toast.error(t('app.addTokenBindingFailed'), {
       description: error instanceof Error ? error.message : String(error),
     })
   } finally {
@@ -118,11 +121,11 @@ async function removeCredentials(email: string) {
     if (removedSelectedAccount && options.value.length > 0 && !selectedOption.value) {
       selectedOption.value = options.value[0]
     }
-    toast.success('已移除憑證。')
+    toast.success(t('app.removeCredential'))
     return true
   } catch (error) {
     console.error('Failed to remove credentials:', error)
-    toast.error('移除憑證失敗。')
+    toast.error(t('app.removeCredentialFailed'))
     return false
   } finally {
     removingAccount.value = ''
@@ -135,36 +138,35 @@ function openAccountSetup() {
 
 onMounted(async () => {
   await refreshCredentials()
-
 })
 
 const handleCopyClick = () => {
-  uploadManager.copyResultsAsJson();
-  copyButtonText.value = '已複製！';
-  setTimeout(() => copyButtonText.value = '複製為 JSON', 1000);
-};
-
-
+  uploadManager.copyResultsAsJson()
+  copyState.value = true
+  setTimeout(() => {
+    copyState.value = false
+  }, 1000)
+}
 
 // Global drag event handlers to detect file dragging
 let dragLeaveTimeout: ReturnType<typeof setTimeout> | null = null
 
 const onDragEnter = (e: DragEvent) => {
   if (!e.dataTransfer?.types.includes('Files')) return
-  
+
   // Clear any pending drag leave timeout
   if (dragLeaveTimeout) {
     clearTimeout(dragLeaveTimeout)
     dragLeaveTimeout = null
   }
-  
+
   isDraggingFiles.value = true
 }
 
 const onDragOver = (e: DragEvent) => {
   if (!e.dataTransfer?.types.includes('Files')) return
   e.preventDefault()
-  
+
   // Clear any pending drag leave timeout - we're still dragging
   if (dragLeaveTimeout) {
     clearTimeout(dragLeaveTimeout)
@@ -174,7 +176,7 @@ const onDragOver = (e: DragEvent) => {
 
 const onDragLeave = (e: DragEvent) => {
   if (!e.dataTransfer?.types.includes('Files')) return
-  
+
   // Use timeout to detect if we've truly left the window
   // dragover will cancel this if we're still in the window
   if (dragLeaveTimeout) {
@@ -192,7 +194,7 @@ const onDrop = () => {
     clearTimeout(dragLeaveTimeout)
     dragLeaveTimeout = null
   }
-  
+
   // Delay resetting isDraggingFiles to allow Wails to process the drop target
   // before Vue re-renders and hides the drop zones
   setTimeout(() => {
@@ -210,28 +212,27 @@ const confirmAlbumUpload = async () => {
   showAlbumInput.value = false
   pendingFiles.value = []
   pendingFileCount.value = 0
-  albumNameOrKey.value = '' // Reset for next upload
+  albumNameOrKey.value = ''
 }
 
 const cancelAlbumUpload = () => {
   showAlbumInput.value = false
   pendingFiles.value = []
   pendingFileCount.value = 0
-  albumNameOrKey.value = '' // Reset on cancel too
+  albumNameOrKey.value = ''
 }
 
 // Handle album error event
 const albumErrorHandler = (e: Event) => {
   const event = e as CustomEvent<{ AlbumName: string; Error: string }>
   const { AlbumName, Error } = event.detail
-  // Check if it's a 404 error (album key not found)
   if (Error.includes('404')) {
-    toast.error('找不到相簿', {
-      description: `相簿金鑰「${AlbumName}」不存在或無效。`,
+    toast.error(t('app.albumNotFound'), {
+      description: t('app.albumNotFoundDescription', { album: AlbumName }),
     })
   } else {
-    toast.error('建立相簿失敗', {
-      description: `相簿「${AlbumName}」：${Error}`,
+    toast.error(t('app.albumCreateFailed'), {
+      description: t('app.albumCreateFailedDescription', { album: AlbumName, error: Error }),
     })
   }
 }
@@ -240,7 +241,7 @@ const uploadErrorHandler = (e: Event) => {
   const event = e as CustomEvent<{ FileName: string; Message: string }>
   const { FileName, Message } = event.detail
   const errorMessage = Message.replace(/^Error:\s*/, '')
-  toast.error(FileName ? `上傳失敗：${FileName}` : '上傳失敗', {
+  toast.error(FileName ? `${t('app.uploadFailed')}: ${FileName}` : t('app.uploadFailed'), {
     description: errorMessage,
     duration: 10000,
     important: true,
@@ -271,7 +272,7 @@ onMounted(() => {
         await Events.Emit('startUpload', { files })
       } catch (error) {
         console.error('Failed to start upload:', error)
-        toast.error('無法開始上傳', {
+        toast.error(t('app.cannotStartUpload'), {
           description: error instanceof Error ? error.message : String(error),
         })
       }
@@ -309,10 +310,10 @@ onUnmounted(() => {
         class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/50 rounded-xl transition-all duration-200 drop-zone"
       >
         <h2 class="text-xl font-semibold select-none text-muted-foreground">
-          僅上傳
+          {{ t('app.uploadOnly') }}
         </h2>
         <p class="text-sm text-muted-foreground/70 mt-2 select-none text-center px-4">
-          不加入任何相簿，只上傳檔案
+          {{ t('app.uploadOnlyDescription') }}
         </p>
       </div>
       <div
@@ -321,10 +322,10 @@ onUnmounted(() => {
         class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/50 rounded-xl transition-all duration-200 drop-zone"
       >
         <h2 class="text-xl font-semibold select-none text-muted-foreground">
-          上傳到相簿
+          {{ t('app.uploadToAlbum') }}
         </h2>
         <p class="text-sm text-muted-foreground/70 mt-2 select-none text-center px-4">
-          上傳並新增到指定相簿（稍後輸入名稱）
+          {{ t('app.uploadToAlbumDescription') }}
         </p>
       </div>
       <div
@@ -333,10 +334,10 @@ onUnmounted(() => {
         class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-muted-foreground/50 rounded-xl transition-all duration-200 drop-zone"
       >
         <h2 class="text-xl font-semibold select-none text-muted-foreground">
-          自動相簿
+          {{ t('app.autoAlbum') }}
         </h2>
         <p class="text-sm text-muted-foreground/70 mt-2 select-none text-center px-4">
-          依資料夾名稱上傳並自動建立相簿
+          {{ t('app.autoAlbumDescription') }}
         </p>
       </div>
     </div>
@@ -354,17 +355,17 @@ onUnmounted(() => {
           </div>
           <div class="flex flex-col gap-1">
             <h1 class="text-xl font-semibold select-none">
-              連接 Google 相簿
+              {{ t('app.accountRequiredTitle') }}
             </h1>
             <p class="text-sm text-muted-foreground select-none">
-              在上傳照片和影片前，請先新增帳號。
+              {{ t('app.accountRequiredDescription') }}
             </p>
           </div>
           <Button
             class="cursor-pointer select-none"
             @click="openAccountSetup"
           >
-            新增 Google 帳號
+            {{ t('app.openAccountSetup') }}
           </Button>
         </div>
       </template>
@@ -377,21 +378,21 @@ onUnmounted(() => {
             style="--wails-draggable: none"
           >
             <h1 class="text-xl font-semibold select-none">
-              上傳到相簿
+              {{ t('app.uploadToAlbum') }}
             </h1>
             <p class="text-muted-foreground select-none">
-              {{ pendingFileCount }} 個檔案已準備上傳
+              {{ t('app.uploadReadyDescription', { count: pendingFileCount }) }}
             </p>
-            
+
             <div class="flex flex-col gap-2 w-full max-w-xs">
               <Label
                 for="album-input"
                 class="text-muted-foreground text-sm"
-              >相簿名稱或金鑰</Label>
+              >{{ t('app.albumNameOrKey') }}</Label>
               <Input
                 id="album-input"
                 v-model="albumNameOrKey"
-                placeholder="相簿名稱或 AF1Qip... 金鑰"
+                :placeholder="t('app.albumPlaceholder')"
                 autofocus
               />
             </div>
@@ -402,14 +403,14 @@ onUnmounted(() => {
                 class="cursor-pointer select-none"
                 @click="cancelAlbumUpload"
               >
-                取消
+                {{ t('common.cancel') }}
               </Button>
               <Button
                 class="cursor-pointer select-none"
                 :disabled="!albumNameOrKey.trim()"
                 @click="confirmAlbumUpload"
               >
-                上傳
+                {{ t('app.upload') }}
               </Button>
             </div>
           </div>
@@ -418,7 +419,7 @@ onUnmounted(() => {
         <!-- Normal UI when not dragging -->
         <template v-else>
           <h1 class="text-xl font-semibold select-none">
-            拖放檔案上傳
+            {{ t('app.title') }}
           </h1>
           <GoogleAccountSelect
             v-model="selectedOption"
@@ -433,14 +434,14 @@ onUnmounted(() => {
             style="--wails-draggable: none"
           >
             <p class="text-sm text-muted-foreground">
-              此憑證需要來自其根裝置（已 root 的 Android 裝置）的 token binding 金鑰。
+              {{ t('app.tokenBindingDescription') }}
             </p>
             <Button
               class="cursor-pointer select-none"
               :disabled="isExtractingTokenBinding"
               @click="addTokenBindingAliasFromADB"
             >
-              {{ isExtractingTokenBinding ? '正在讀取 ADB...' : '從 ADB 讀取' }}
+              {{ isExtractingTokenBinding ? t('app.readingADB') : t('app.readFromADB') }}
             </Button>
           </div>
 
@@ -450,7 +451,7 @@ onUnmounted(() => {
                 variant="outline"
                 class="cursor-pointer select-none"
               >
-                設定
+                {{ t('app.settings') }}
               </Button>
             </SheetTrigger>
             <SheetContent side="bottom">
@@ -465,12 +466,12 @@ onUnmounted(() => {
             class="flex flex-col items-center gap-2 border rounded-lg p-5 mt-5"
           >
             <h2 class="text-l font-semibold select-none ">
-              上傳結果
+              {{ t('app.uploadResults') }}
             </h2>
-            <Label class="text-muted-foreground">成功：{{ uploadState.results.success.length }}</Label>
-            <Label class="text-muted-foreground">失敗：{{ uploadState.results.fail.length }}</Label>
-            <Label class="text-muted-foreground">略過：{{ uploadState.results.skipped.length }}</Label>
-            <Label class="text-muted-foreground">警告：{{ uploadState.results.warnings.length }}</Label>
+            <Label class="text-muted-foreground">{{ t('app.success') }}：{{ uploadState.results.success.length }}</Label>
+            <Label class="text-muted-foreground">{{ t('app.fail') }}：{{ uploadState.results.fail.length }}</Label>
+            <Label class="text-muted-foreground">{{ t('app.skipped') }}：{{ uploadState.results.skipped.length }}</Label>
+            <Label class="text-muted-foreground">{{ t('app.warnings') }}：{{ uploadState.results.warnings.length }}</Label>
             <Button
               variant="outline"
               class="cursor-pointer select-none min-w-[125px]"
@@ -500,4 +501,3 @@ onUnmounted(() => {
     />
   </main>
 </template>
-

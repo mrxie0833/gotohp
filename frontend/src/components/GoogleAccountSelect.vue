@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Check, Plus, X } from '@lucide/vue'
 import {
   SelectItem as SelectItemPrimitive,
@@ -14,6 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+
+const { t } = useI18n()
 
 interface Props {
   modelValue?: string
@@ -46,7 +49,6 @@ watch(() => props.modelValue, (newValue) => {
 watch(selectedValue, (newValue) => {
   emit('update:modelValue', newValue)
 })
-
 </script>
 
 <template>
@@ -55,7 +57,7 @@ watch(selectedValue, (newValue) => {
     v-model:open="isOpen"
   >
     <SelectTrigger class="max-w-60 select-none">
-      <SelectValue placeholder="選擇帳號" />
+      <SelectValue :placeholder="t('common.selectAccount')" />
     </SelectTrigger>
     <SelectContent
       align="center"
@@ -83,8 +85,8 @@ watch(selectedValue, (newValue) => {
           <button
             type="button"
             class="absolute right-1.5 top-1/2 z-10 flex size-6 -translate-y-1/2 items-center justify-center rounded text-muted-foreground hover:bg-destructive hover:text-white disabled:pointer-events-none disabled:opacity-50"
-            :aria-label="`移除 ${option}`"
-            :title="`移除 ${option}`"
+            :aria-label="t('common.removeAccount', { email: option })"
+            :title="t('common.removeAccount', { email: option })"
             :disabled="removingAccount === option"
             @pointerdown.stop.prevent
             @click.stop.prevent="emit('item-removed', option)"
@@ -101,7 +103,7 @@ watch(selectedValue, (newValue) => {
         @click.stop.prevent="isOpen = false; emit('add')"
       >
         <Plus class="size-4" />
-        新增帳號
+        {{ t('common.addAccount') }}
       </button>
     </SelectContent>
   </Select>

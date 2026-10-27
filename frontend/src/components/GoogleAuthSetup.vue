@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { Browser } from '@wailsio/runtime'
 import { toast } from 'vue-sonner'
 import { ChevronDown, ExternalLink } from '@lucide/vue'
@@ -13,6 +14,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet'
+
+const { t } = useI18n()
 
 const embeddedSetupURL = 'https://accounts.google.com/EmbeddedSetup'
 
@@ -39,7 +42,7 @@ async function openEmbeddedSetup() {
   try {
     await Browser.OpenURL(embeddedSetupURL)
   } catch (error) {
-    toast.error('無法開啟系統瀏覽器', {
+    toast.error(t('auth.openBrowserFailed'), {
       description: error instanceof Error ? error.message : String(error),
     })
   }
@@ -55,11 +58,11 @@ async function connectAccount() {
     oauthToken.value = ''
     isOpen.value = false
     emit('account-added')
-    toast.success('Google 帳號已連線。', {
+    toast.success(t('auth.googleConnected'), {
       description: connectedEmail,
     })
   } catch (error) {
-    toast.error('無法連線 Google 帳號', {
+    toast.error(t('auth.googleConnectFailed'), {
       description: error instanceof Error ? error.message : String(error),
     })
   } finally {
@@ -78,9 +81,9 @@ async function addRawCredential() {
     rawCredential.value = ''
     isOpen.value = false
     emit('account-added')
-    toast.success('憑證已新增。')
+    toast.success(t('auth.credentialAdded'))
   } catch (error) {
-    toast.error('無法新增憑證', {
+    toast.error(t('auth.credentialAddFailed'), {
       description: error instanceof Error ? error.message : String(error),
     })
   } finally {
@@ -98,7 +101,7 @@ async function addRawCredential() {
     >
       <div class="mx-auto flex w-full max-w-sm flex-col px-5 pt-1 pb-6">
         <SheetHeader class="gap-0 px-0 pb-4 text-center">
-          <SheetTitle>連線 Google 相簿</SheetTitle>
+          <SheetTitle>{{ t('auth.title') }}</SheetTitle>
         </SheetHeader>
 
         <div class="flex flex-col gap-4">
@@ -106,7 +109,7 @@ async function addRawCredential() {
           <div class="flex flex-col gap-2">
             <p class="flex items-center gap-2 text-sm font-medium select-none">
               <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs">1</span>
-              開啟 Google 登入頁面
+              {{ t('auth.step1') }}
             </p>
             <Button
               type="button"
@@ -116,14 +119,14 @@ async function addRawCredential() {
               @click="openEmbeddedSetup"
             >
               <ExternalLink class="size-4" />
-              開啟登入頁面
+              {{ t('auth.loginPageButton') }}
             </Button>
             <ol class="list-decimal space-y-1 rounded-lg border bg-muted/30 py-2.5 pr-3 pl-7 text-xs leading-snug text-muted-foreground">
               <li>
-                登入後，點選 <span class="text-foreground">我同意</span>。頁面可能卡在載入動畫，這是正常的。
+                {{ t('auth.instructions1') }}
               </li>
-              <li>開啟開發者工具，然後進入 Application 或 Storage → Cookies → accounts.google.com。</li>
-              <li>複製 <code class="text-foreground">oauth_token</code> Cookie 的值。</li>
+              <li>{{ t('auth.instructions2') }}</li>
+              <li>{{ t('auth.instructions3') }}</li>
             </ol>
           </div>
 
@@ -134,7 +137,7 @@ async function addRawCredential() {
               class="flex items-center gap-2 text-sm font-medium"
             >
               <span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs">2</span>
-              貼上 oauth_token 的值
+              {{ t('auth.step2') }}
             </Label>
             <Input
               id="google-oauth-token"
@@ -142,7 +145,7 @@ async function addRawCredential() {
               type="password"
               autocomplete="off"
               spellcheck="false"
-              placeholder="貼上 Cookie 值"
+              :placeholder="t('auth.tokenPlaceholder')"
               :disabled="isConnecting"
               @keydown.enter="connectAccount"
             />
@@ -152,7 +155,7 @@ async function addRawCredential() {
               :disabled="!oauthToken.trim() || isConnecting"
               @click="connectAccount"
             >
-              {{ isConnecting ? '連線中...' : '連線帳號' }}
+              {{ isConnecting ? t('common.connecting') : t('common.connectAccount') }}
             </Button>
           </div>
         </div>
@@ -167,7 +170,7 @@ async function addRawCredential() {
               class="size-3.5 transition-transform"
               :class="showAdvanced && 'rotate-180'"
             />
-            改為貼上擷取到的憑證
+            {{ t('auth.advancedToggle') }}
           </button>
           <div
             v-if="showAdvanced"
@@ -179,7 +182,7 @@ async function addRawCredential() {
               type="password"
               autocomplete="off"
               spellcheck="false"
-              placeholder="androidId=...&Email=..."
+              :placeholder="t('auth.rawCredentialPlaceholder')"
               :disabled="isAddingRawCredential"
               @keydown.enter="addRawCredential"
             />
@@ -190,7 +193,7 @@ async function addRawCredential() {
               :disabled="!rawCredential.trim() || isAddingRawCredential"
               @click="addRawCredential"
             >
-              {{ isAddingRawCredential ? '新增中...' : '新增憑證' }}
+              {{ isAddingRawCredential ? t('common.addingCredential') : t('common.addCredential') }}
             </Button>
           </div>
         </div>
@@ -198,4 +201,3 @@ async function addRawCredential() {
     </SheetContent>
   </Sheet>
 </template>
-

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import Button from "./components/ui/button/Button.vue"
 import { Progress } from "./components/ui/progress"
 import { ScrollArea } from "./components/ui/scroll-area"
@@ -7,6 +8,7 @@ import ThreadProgress from "./components/ThreadProgress.vue"
 import { uploadManager } from './utils/UploadManager'
 import { X, Clock, Zap, FolderPlus, AlertTriangle } from '@lucide/vue'
 
+const { t } = useI18n()
 const { state } = uploadManager
 
 // Elapsed time ticker
@@ -90,7 +92,7 @@ function warningFiles(paths: string[]): string {
         {{ state.uploadedFiles }}<span class="text-muted-foreground font-normal">/</span><span class="text-muted-foreground">{{ state.totalFiles }}</span>
       </p>
       <p class="text-xs text-muted-foreground">
-        已處理項目
+        {{ t('upload.processedItems') }}
       </p>
     </div>
 
@@ -131,7 +133,7 @@ function warningFiles(paths: string[]): string {
           class="text-primary"
         />
         <span class="text-sm font-medium">
-          {{ state.isCreatingAlbum ? '新增至相簿中...' : '已加入相簿' }}
+          {{ state.isCreatingAlbum ? t('upload.addingToAlbum') : t('upload.addedToAlbum') }}
         </span>
       </div>
       <p class="text-xs text-muted-foreground mb-1.5">
@@ -142,7 +144,7 @@ function warningFiles(paths: string[]): string {
         class="h-1.5"
       />
       <p class="text-xs text-muted-foreground mt-1">
-        {{ state.albumStatus.ItemsAdded }} / {{ state.albumStatus.TotalItems }} 個項目
+        {{ t('upload.itemsProgress', { current: state.albumStatus.ItemsAdded, total: state.albumStatus.TotalItems }) }}
       </p>
     </div>
 
@@ -173,7 +175,7 @@ function warningFiles(paths: string[]): string {
     <!-- Thread list - scrollable -->
     <div class="flex-1 min-h-0 mb-3">
       <p class="text-xs text-muted-foreground mb-1.5">
-        作用中執行緒（{{ threadsList.length }}）
+        {{ t('upload.activeThreads', { count: threadsList.length }) }}
       </p>
       <ScrollArea class="h-[calc(100%-20px)]">
         <div class="space-y-1.5 pr-3">
@@ -197,7 +199,7 @@ function warningFiles(paths: string[]): string {
         :size="14"
         class="mr-1"
       />
-      取消上傳
+      {{ t('upload.cancelUpload') }}
     </Button>
   </div>
 </template>
