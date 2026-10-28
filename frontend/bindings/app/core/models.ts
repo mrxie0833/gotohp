@@ -59,6 +59,171 @@ export class AccountsState {
     }
 }
 
+/**
+ * AlbumError represents an album creation error
+ */
+export class AlbumError {
+    "AlbumName": string;
+    "Error": string;
+
+    /** Creates a new AlbumError instance. */
+    constructor($$source: Partial<AlbumError> = {}) {
+        if (!("AlbumName" in $$source)) {
+            this["AlbumName"] = "";
+        }
+        if (!("Error" in $$source)) {
+            this["Error"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new AlbumError instance from a string or object.
+     */
+    static createFrom($$source: any = {}): AlbumError {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new AlbumError($$parsedSource as Partial<AlbumError>);
+    }
+}
+
+/**
+ * AlbumStatus represents the status of album creation
+ */
+export class AlbumStatus {
+    "AlbumName": string;
+    "ItemsAdded": number;
+    "TotalItems": number;
+    "AlbumKeys": string[];
+    "IsComplete": boolean;
+
+    /** Creates a new AlbumStatus instance. */
+    constructor($$source: Partial<AlbumStatus> = {}) {
+        if (!("AlbumName" in $$source)) {
+            this["AlbumName"] = "";
+        }
+        if (!("ItemsAdded" in $$source)) {
+            this["ItemsAdded"] = 0;
+        }
+        if (!("TotalItems" in $$source)) {
+            this["TotalItems"] = 0;
+        }
+        if (!("AlbumKeys" in $$source)) {
+            this["AlbumKeys"] = [];
+        }
+        if (!("IsComplete" in $$source)) {
+            this["IsComplete"] = false;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new AlbumStatus instance from a string or object.
+     */
+    static createFrom($$source: any = {}): AlbumStatus {
+        const $$createField3_0 = $$createType2;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("AlbumKeys" in $$parsedSource) {
+            $$parsedSource["AlbumKeys"] = $$createField3_0($$parsedSource["AlbumKeys"]);
+        }
+        return new AlbumStatus($$parsedSource as Partial<AlbumStatus>);
+    }
+}
+
+export class FileUploadResult {
+    "MediaKey": string;
+    "IsError": boolean;
+    "IsLivePhoto": boolean;
+    "Skipped": boolean;
+    "SkipCode": string;
+    "SkipReason": string;
+    "ErrorMessage": string;
+    "Path": string;
+    "Paths": string[];
+
+    /** Creates a new FileUploadResult instance. */
+    constructor($$source: Partial<FileUploadResult> = {}) {
+        if (!("MediaKey" in $$source)) {
+            this["MediaKey"] = "";
+        }
+        if (!("IsError" in $$source)) {
+            this["IsError"] = false;
+        }
+        if (!("IsLivePhoto" in $$source)) {
+            this["IsLivePhoto"] = false;
+        }
+        if (!("Skipped" in $$source)) {
+            this["Skipped"] = false;
+        }
+        if (!("SkipCode" in $$source)) {
+            this["SkipCode"] = "";
+        }
+        if (!("SkipReason" in $$source)) {
+            this["SkipReason"] = "";
+        }
+        if (!("ErrorMessage" in $$source)) {
+            this["ErrorMessage"] = "";
+        }
+        if (!("Path" in $$source)) {
+            this["Path"] = "";
+        }
+        if (!("Paths" in $$source)) {
+            this["Paths"] = [];
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new FileUploadResult instance from a string or object.
+     */
+    static createFrom($$source: any = {}): FileUploadResult {
+        const $$createField8_0 = $$createType2;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Paths" in $$parsedSource) {
+            $$parsedSource["Paths"] = $$createField8_0($$parsedSource["Paths"]);
+        }
+        return new FileUploadResult($$parsedSource as Partial<FileUploadResult>);
+    }
+}
+
+/**
+ * FilesDroppedEvent is emitted when files are dropped on any drop zone
+ */
+export class FilesDroppedEvent {
+    "files": string[];
+    "dropZone": string;
+
+    /** Creates a new FilesDroppedEvent instance. */
+    constructor($$source: Partial<FilesDroppedEvent> = {}) {
+        if (!("files" in $$source)) {
+            this["files"] = [];
+        }
+        if (!("dropZone" in $$source)) {
+            this["dropZone"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new FilesDroppedEvent instance from a string or object.
+     */
+    static createFrom($$source: any = {}): FilesDroppedEvent {
+        const $$createField0_0 = $$createType2;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("files" in $$parsedSource) {
+            $$parsedSource["files"] = $$createField0_0($$parsedSource["files"]);
+        }
+        return new FilesDroppedEvent($$parsedSource as Partial<FilesDroppedEvent>);
+    }
+}
+
+/**
+ * Preferences are GUI settings. The CLI never reads them; every CLI run is
+ * configured by flags alone.
+ */
 export class Preferences {
     "proxy": string;
     "language": string;
@@ -74,9 +239,14 @@ export class Preferences {
     "disableUnsupportedFilesFilter": boolean;
     "setDateFromFilename": boolean;
     "excludePattern": string;
+    
+    /**
+     * AlbumName and AlbumAutoMode are per-session choices and are never persisted.
+     */
     "albumName": string;
     "albumAutoMode": boolean;
-
+    
+    /** Creates a new Preferences instance. */
     constructor($$source: Partial<Preferences> = {}) {
         if (!("proxy" in $$source)) {
             this["proxy"] = "";
@@ -130,11 +300,159 @@ export class Preferences {
         Object.assign(this, $$source);
     }
 
+    /**
+     * Creates a new Preferences instance from a string or object.
+     */
     static createFrom($$source: any = {}): Preferences {
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         return new Preferences($$parsedSource as Partial<Preferences>);
     }
 }
 
+export class PreflightWarning {
+    "Paths": string[];
+    "Code": string;
+    "Message": string;
+
+    /** Creates a new PreflightWarning instance. */
+    constructor($$source: Partial<PreflightWarning> = {}) {
+        if (!("Paths" in $$source)) {
+            this["Paths"] = [];
+        }
+        if (!("Code" in $$source)) {
+            this["Code"] = "";
+        }
+        if (!("Message" in $$source)) {
+            this["Message"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new PreflightWarning instance from a string or object.
+     */
+    static createFrom($$source: any = {}): PreflightWarning {
+        const $$createField0_0 = $$createType2;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Paths" in $$parsedSource) {
+            $$parsedSource["Paths"] = $$createField0_0($$parsedSource["Paths"]);
+        }
+        return new PreflightWarning($$parsedSource as Partial<PreflightWarning>);
+    }
+}
+
+/**
+ * StartUploadEvent is received from frontend to start upload
+ */
+export class StartUploadEvent {
+    "files": string[];
+
+    /** Creates a new StartUploadEvent instance. */
+    constructor($$source: Partial<StartUploadEvent> = {}) {
+        if (!("files" in $$source)) {
+            this["files"] = [];
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new StartUploadEvent instance from a string or object.
+     */
+    static createFrom($$source: any = {}): StartUploadEvent {
+        const $$createField0_0 = $$createType2;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("files" in $$parsedSource) {
+            $$parsedSource["files"] = $$createField0_0($$parsedSource["files"]);
+        }
+        return new StartUploadEvent($$parsedSource as Partial<StartUploadEvent>);
+    }
+}
+
+export class ThreadStatus {
+    "WorkerID": number;
+
+    /**
+     * "idle", "hashing", "checking", "uploading", "finalizing", "completed", "skipped", "error"
+     */
+    "Status": string;
+    "FilePath": string;
+    "FileName": string;
+    "Message": string;
+    "BytesUploaded": number;
+    "BytesTotal": number;
+
+    /**
+     * Current attempt number (1-based), 0 if not applicable
+     */
+    "Attempt": number;
+
+    /** Creates a new ThreadStatus instance. */
+    constructor($$source: Partial<ThreadStatus> = {}) {
+        if (!("WorkerID" in $$source)) {
+            this["WorkerID"] = 0;
+        }
+        if (!("Status" in $$source)) {
+            this["Status"] = "";
+        }
+        if (!("FilePath" in $$source)) {
+            this["FilePath"] = "";
+        }
+        if (!("FileName" in $$source)) {
+            this["FileName"] = "";
+        }
+        if (!("Message" in $$source)) {
+            this["Message"] = "";
+        }
+        if (!("BytesUploaded" in $$source)) {
+            this["BytesUploaded"] = 0;
+        }
+        if (!("BytesTotal" in $$source)) {
+            this["BytesTotal"] = 0;
+        }
+        if (!("Attempt" in $$source)) {
+            this["Attempt"] = 0;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ThreadStatus instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ThreadStatus {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ThreadStatus($$parsedSource as Partial<ThreadStatus>);
+    }
+}
+
+export class UploadBatchStart {
+    "Total": number;
+    "TotalBytes": number;
+
+    /** Creates a new UploadBatchStart instance. */
+    constructor($$source: Partial<UploadBatchStart> = {}) {
+        if (!("Total" in $$source)) {
+            this["Total"] = 0;
+        }
+        if (!("TotalBytes" in $$source)) {
+            this["TotalBytes"] = 0;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new UploadBatchStart instance from a string or object.
+     */
+    static createFrom($$source: any = {}): UploadBatchStart {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new UploadBatchStart($$parsedSource as Partial<UploadBatchStart>);
+    }
+}
+
+// Private type creation functions
 const $$createType0 = AccountSummary.createFrom;
 const $$createType1 = $Create.Array($$createType0);
+const $$createType2 = $Create.Array($Create.Any);
