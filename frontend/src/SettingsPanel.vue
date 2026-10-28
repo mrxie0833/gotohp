@@ -48,7 +48,7 @@ type BooleanSetting = Exclude<keyof Settings, 'proxy' | 'uploadThreads' | 'langu
 
 const settings = ref<Settings>({
   proxy: '',
-  language: 'zh-TW',
+  language: 'en-US',
   useQuota: false,
   saver: false,
   recursive: false,
@@ -73,7 +73,7 @@ onMounted(async () => {
     const config = await ConfigManager.GetSettings()
     settings.value = {
       proxy: config.proxy || '',
-      language: config.language || 'zh-TW',
+      language: config.language || 'en-US',
       useQuota: config.useQuota || false,
       saver: config.saver || false,
       recursive: config.recursive || false,

@@ -1,6 +1,6 @@
 import { createI18n } from 'vue-i18n'
 
-export const defaultLocale = 'zh-TW'
+export const defaultLocale = 'en-US'
 
 const messages = {
   'zh-TW': {
@@ -220,7 +220,7 @@ const messages = {
 export const i18n = createI18n({
   legacy: false,
   locale: defaultLocale,
-  fallbackLocale: 'zh-TW',
+  fallbackLocale: 'en-US',
   messages,
 })
 

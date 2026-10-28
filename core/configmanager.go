@@ -81,7 +81,7 @@ func normalizeLocaleValue(value string) string {
 	case "en", "en-us", "en-gb", "en-au", "en-ca":
 		return "en-US"
 	default:
-		return "zh-TW"
+		return "en-US"
 	}
 }
 
@@ -124,7 +124,7 @@ var (
 	AppConfig          Config
 	ConfigPath         string
 	DefaultPreferences = Preferences{
-		Language:                 "zh-TW",
+		Language:                 "en-US",
 		SkipIncompleteLivePhotos: true,
 		UploadThreads:            3,
 	}
@@ -889,3 +889,4 @@ func migrateLegacyConfig(k *koanf.Koanf) Config {
 	AppConfig = previous
 	return c
 }
+
