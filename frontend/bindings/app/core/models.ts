@@ -239,13 +239,13 @@ export class Preferences {
     "disableUnsupportedFilesFilter": boolean;
     "setDateFromFilename": boolean;
     "excludePattern": string;
-    
+
     /**
      * AlbumName and AlbumAutoMode are per-session choices and are never persisted.
      */
     "albumName": string;
     "albumAutoMode": boolean;
-    
+
     /** Creates a new Preferences instance. */
     constructor($$source: Partial<Preferences> = {}) {
         if (!("proxy" in $$source)) {
