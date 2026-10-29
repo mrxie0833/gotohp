@@ -129,4 +129,6 @@ export function GetLanguage(): $CancellablePromise<string> {
     return $Call.ByID(3973310264);
 }
 
-// The rest of this file is generated and untouched.
+// Private type creation functions
+const $$createType0 = $models.AccountsState.createFrom;
+const $$createType1 = $models.Preferences.createFrom;
