@@ -212,14 +212,14 @@ const confirmAlbumUpload = async () => {
   showAlbumInput.value = false
   pendingFiles.value = []
   pendingFileCount.value = 0
-  albumNameOrKey.value = ''
+  albumNameOrKey.value = '' // Reset for next upload
 }
 
 const cancelAlbumUpload = () => {
   showAlbumInput.value = false
   pendingFiles.value = []
   pendingFileCount.value = 0
-  albumNameOrKey.value = ''
+  albumNameOrKey.value = '' // Reset on cancel too
 }
 
 // Handle album error event
